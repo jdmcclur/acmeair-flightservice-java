@@ -20,15 +20,12 @@ import static com.mongodb.client.model.Filters.eq;
 
 import com.acmeair.AirportCodeMapping;
 import com.acmeair.mongo.ConnectionManager;
-import com.acmeair.mongo.MongoConstants;
 import com.acmeair.service.FlightService;
 import com.acmeair.service.KeyGenerator;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-
-import com.mongodb.util.JSON;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -48,7 +45,7 @@ import javax.json.JsonReaderFactory;
 import org.bson.Document;
 
 @ApplicationScoped
-public class FlightServiceImpl extends FlightService implements  MongoConstants {
+public class FlightServiceImpl extends FlightService {
 
   private static final Logger logger = Logger.getLogger(FlightServiceImpl.class.getName()); 
   private static final JsonReaderFactory factory = Json.createReaderFactory(null);
@@ -166,7 +163,7 @@ public class FlightServiceImpl extends FlightService implements  MongoConstants 
           tempDoc.append("scheduledDepartureTime", deptTime.toString());
           tempDoc.remove("scheduledArrivalTime");
           tempDoc.append("scheduledArrivalTime", arvTime.toString());
-          tempDoc.append("flightSegment", JSON.parse(segment));
+          tempDoc.append("flightSegment", BasicDBObject.parse(segment));
 
 
           if (logger.isLoggable(Level.FINE)) {
