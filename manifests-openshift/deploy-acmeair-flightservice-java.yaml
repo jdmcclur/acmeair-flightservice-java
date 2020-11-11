@@ -29,8 +29,6 @@ spec:
           value: password
         - name: MONGO_HOST
           value: acmeair-flight-db
-        - name: SECURE_SERVICE_CALLS
-          value: 'true'
         - name: JAEGER_AGENT_HOST
           value: jaeger-all-in-one-inmemory-agent
         - name: JAEGER_AGENT_PORT
@@ -41,6 +39,8 @@ spec:
           value: 'false'
         - name: TRACE_SPEC
           value: '*=info'
+        - name: LOGGING_FORMAT
+          value: 'simple'
         readinessProbe:
           httpGet:
             path: /health

@@ -122,7 +122,6 @@ public class FlightServiceImpl extends FlightService {
       }
 
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
@@ -178,7 +177,6 @@ public class FlightServiceImpl extends FlightService {
       }
       return flights;
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
       return null;
     }
@@ -228,7 +226,6 @@ public class FlightServiceImpl extends FlightService {
           flightSegJson.getString("destPort"), 
           flightSegJson.getInt("miles"));
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

@@ -137,7 +137,7 @@ public class FlightServiceRest {
           .add("tripLegs", 2)
           .build();
     }
-
+    
     return options;
   }
 

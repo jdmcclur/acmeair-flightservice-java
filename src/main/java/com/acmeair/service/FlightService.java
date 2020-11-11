@@ -46,7 +46,6 @@ public abstract class FlightService {
   private static final JsonReaderFactory factory = Json.createReaderFactory(null);
   protected static final Logger logger =  Logger.getLogger(FlightService.class.getName());  
 
-  // TODO:need to find a way to invalidate these maps
   protected static ConcurrentHashMap<String, String> originAndDestPortToSegmentCache = 
           new ConcurrentHashMap<String,String>();
   protected static ConcurrentHashMap<String, List<String>> flightSegmentAndDataToFlightCache = 
@@ -170,7 +169,6 @@ public abstract class FlightService {
         return flights;
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
       return null;
     }
