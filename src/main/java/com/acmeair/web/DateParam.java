@@ -18,7 +18,6 @@ package com.acmeair.web;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import javax.ws.rs.WebApplicationException;
 
@@ -27,18 +26,24 @@ import javax.ws.rs.WebApplicationException;
 
 public class DateParam {
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd yyyy");
-  private static int year = Calendar.getInstance().get(Calendar.YEAR);
+  private static final int ZERO = 48;
   private Date date;
   
   public DateParam( String dateTime ) throws WebApplicationException {
-    try {
-      String dateOnly = dateTime.substring(0,10) + " " + year; 
-            
+    
+      String dateOnly;
+
+      if (dateTime.charAt(11) == ZERO) {
+        // Assume format is EEE MMM dd 00:00:00 z yyyy from jmeter. Chop of the time + timezone.
+        dateOnly = dateTime.substring(0,10) + " " + dateTime.substring(24,28);
+      }
+      else {
+        // Assume format is EEE MMM dd yyyy from the browser.
+        dateOnly = dateTime.substring(0,15);
+      }
+
       LocalDate localDate = LocalDate.parse(dateOnly, formatter);
       date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    } catch ( final Exception ex ) {
-      throw new WebApplicationException( ex );
-    }
   }
 
   public Date getDate() {
