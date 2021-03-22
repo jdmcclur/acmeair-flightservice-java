@@ -18,7 +18,7 @@
    
   <quickStartSecurity userName="${env.USERNAME}" userPassword="${env.PASSWORD}" />
 
-  <logging consoleFormat="${LOGGING_FORMAT}" consoleSource="message,trace,accessLog,ffdc,audit" messageFormat="${LOGGING_FORMAT}" messageSource="message,trace,accessLog,ffdc,audit" traceSpecification="${TRACE_SPEC}" />-->
+  <logging consoleFormat="${LOGGING_FORMAT}" consoleSource="message,trace,accessLog,ffdc,audit" messageFormat="${LOGGING_FORMAT}" messageSource="message,trace,accessLog,ffdc,audit" traceSpecification="${TRACE_SPEC}" />
 
   <webApplication name="acmeair-flightservice" location="acmeair-flightservice-java-4.0.war" contextRoot="/flight">
     <!-- enable visibility to third party apis -->
