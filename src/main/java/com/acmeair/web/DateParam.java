@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 // Payara and Helidon don't seem to support Date on a JAX-RS Param,
 // so added this hack to convert to the Date.
