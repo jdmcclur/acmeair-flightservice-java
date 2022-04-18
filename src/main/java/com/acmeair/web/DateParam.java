@@ -34,7 +34,7 @@ public class DateParam {
       String dateOnly;
 
       if (dateTime.charAt(11) == ZERO) {
-        // Assume format is EEE MMM dd 00:00:00 z yyyy from jmeter. Chop of the time + timezone.
+        // Assume format is EEE MMM dd 00:00:00 z yyyy from jmeter. Chop off the time + timezone.
         dateOnly = dateTime.substring(0,10) + " " + dateTime.substring(24,28);
       }
       else {

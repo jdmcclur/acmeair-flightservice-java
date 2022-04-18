@@ -18,9 +18,12 @@ package com.acmeair.web;
 import com.acmeair.service.FlightService;
 
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -47,6 +50,9 @@ public class FlightServiceRest {
  
   private static final JsonReaderFactory jsonReaderFactory = Json.createReaderFactory(null);
   private static final JsonBuilderFactory jsonObjectFactory  = Json.createBuilderFactory(null);
+
+  private static final AtomicInteger SEARCHES = new AtomicInteger(0);
+  private static final AtomicInteger SUCCESS = new AtomicInteger(0);
 
   /**
    * Get flights.
@@ -93,6 +99,34 @@ public class FlightServiceRest {
     return Response.ok("OK").build();
   } 
 
+  // Audit the number of searches and successes. Differences between time zones of the client 
+  // and server can sometimes lead to different success ratios.
+  // This is a way to check.
+
+  @GET
+  @Path("/searches")
+  public Response searches() {
+    return Response.ok(SEARCHES.get()).build();
+  }
+
+  @GET
+  @Path("/successes")
+  public Response successes() {
+    return Response.ok(SUCCESS.get()).build();
+  }
+
+  // Returns percentage of searches that are successful
+  @GET
+  @Path("/successratio")
+  public Response successratio() {
+    if (SEARCHES.get() == 0) {
+      return Response.ok(0).build();
+    }
+
+    double ratio = (double) (SUCCESS.get() * 100) / SEARCHES.get();
+    return Response.ok(new BigDecimal(ratio).setScale(1, RoundingMode.HALF_UP).doubleValue()).build();
+  }
+
   private JsonObject getFlightOptions(String fromAirport, String toAirport, Date fromDate, 
       Date returnDate, boolean oneWay) {
 
@@ -100,6 +134,12 @@ public class FlightServiceRest {
     List<String> toFlights = flightService.getFlightByAirportsAndDepartureDate(fromAirport, 
         toAirport, fromDate);
     JsonArray toFlightsJsonArray = convertFlightListToJsonArray(toFlights);
+
+    // audit toFlights
+    SEARCHES.incrementAndGet();
+    if (toFlights.size() > 0) {
+      SUCCESS.incrementAndGet();
+    }
 
     JsonObject options;
 
@@ -119,6 +159,12 @@ public class FlightServiceRest {
       List<String> retFlights = flightService.getFlightByAirportsAndDepartureDate(toAirport, 
           fromAirport, returnDate);
       JsonArray retFlightsJsonArray = convertFlightListToJsonArray(retFlights);
+
+      // audit retFlights
+      SEARCHES.incrementAndGet();
+      if (retFlights.size() > 0) {
+        SUCCESS.incrementAndGet();
+      }
 
       options = jsonObjectFactory.createObjectBuilder()
           .add("tripFlights", jsonObjectFactory.createArrayBuilder()
