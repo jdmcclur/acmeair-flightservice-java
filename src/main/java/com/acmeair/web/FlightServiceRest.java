@@ -23,7 +23,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -51,8 +51,8 @@ public class FlightServiceRest {
   private static final JsonReaderFactory jsonReaderFactory = Json.createReaderFactory(null);
   private static final JsonBuilderFactory jsonObjectFactory  = Json.createBuilderFactory(null);
 
-  private static final AtomicInteger SEARCHES = new AtomicInteger(0);
-  private static final AtomicInteger SUCCESS = new AtomicInteger(0);
+  private static final AtomicLong SEARCHES = new AtomicLong(0);
+  private static final AtomicLong SUCCESS = new AtomicLong(0);
 
   /**
    * Get flights.
