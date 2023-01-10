@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -43,6 +44,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 @Path("/")
+@ApplicationScoped
 public class FlightServiceRest {
 
   @Inject
