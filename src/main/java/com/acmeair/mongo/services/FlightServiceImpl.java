@@ -19,7 +19,6 @@ package com.acmeair.mongo.services;
 import static com.mongodb.client.model.Filters.eq;
 
 import com.acmeair.AirportCodeMapping;
-import com.acmeair.mongo.ConnectionManager;
 import com.acmeair.service.FlightService;
 import com.acmeair.service.KeyGenerator;
 import com.mongodb.BasicDBObject;
@@ -60,14 +59,13 @@ public class FlightServiceImpl extends FlightService {
   KeyGenerator keyGenerator;
 
   @Inject
-  ConnectionManager connectionManager;
+  MongoDatabase database;
 
   /**
    * Init mongo db.
    */
   @PostConstruct
   public void initialization() {
-    MongoDatabase database = connectionManager.getDb();
     flight = database.getCollection("flight");
     flightSegment = database.getCollection("flightSegment");
     airportCodeMapping = database.getCollection("airportCodeMapping");
