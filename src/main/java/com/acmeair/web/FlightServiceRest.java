@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -40,13 +41,23 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 
-import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 @Path("/")
+@ApplicationScoped
 public class FlightServiceRest {
 
   @Inject
-  private FlightService flightService;
+  FlightService flightService;
+
+  @Inject
+  @ConfigProperty(name = "TARGET_SUCCESS_RATIO_FOR_AUDIT", defaultValue = "34")
+  Integer TARGET_SUCCESS_RATIO_FOR_AUDIT;
+
+  @Inject
+  @ConfigProperty(name = "TOLERANCE_FOR_AUDIT", defaultValue = "1")
+  Integer TOLERANCE_FOR_AUDIT;
  
   private static final JsonReaderFactory jsonReaderFactory = Json.createReaderFactory(null);
   private static final JsonBuilderFactory jsonObjectFactory  = Json.createBuilderFactory(null);
@@ -62,7 +73,7 @@ public class FlightServiceRest {
   @Path("/queryflights")
   @Consumes({"application/x-www-form-urlencoded"})
   @Produces("application/json")
-  @SimplyTimed(name = "com.acmeair.web.FlightServiceRest.getTripFlights", tags = "app=acmeair-flightservice-java")
+  @Timed(name = "com.acmeair.web.FlightServiceRest.getTripFlights", tags = "app=acmeair-flightservice-java")
   public JsonObject getTripFlights(
       @FormParam("fromAirport") String fromAirport,
       @FormParam("toAirport") String toAirport,
@@ -85,7 +96,7 @@ public class FlightServiceRest {
   @Path("/getrewardmiles")
   @Consumes({"application/x-www-form-urlencoded"})
   @Produces("application/json")
-  @SimplyTimed(name = "com.acmeair.web.FlightServiceRest.getRewardsMiles", tags = "app=acmeair-flightservice-java")
+  @Timed(name = "com.acmeair.web.FlightServiceRest.getRewardsMiles", tags = "app=acmeair-flightservice-java")
   public MilesResponse getRewardMiles(
       @FormParam("flightSegment") String segmentId
       ) {
@@ -125,6 +136,21 @@ public class FlightServiceRest {
 
     double ratio = (double) (SUCCESS.get() * 100) / SEARCHES.get();
     return Response.ok(new BigDecimal(ratio).setScale(1, RoundingMode.HALF_UP).doubleValue()).build();
+  }
+
+  @GET
+  @Path("/audit")
+  public Response audit() {
+    if (SEARCHES.get() == 0) {
+      return Response.ok("fail").build();
+    }
+
+    double ratio = (double) (SUCCESS.get() * 100) / SEARCHES.get();
+    if (ratio > TARGET_SUCCESS_RATIO_FOR_AUDIT - TOLERANCE_FOR_AUDIT && ratio < TARGET_SUCCESS_RATIO_FOR_AUDIT + TOLERANCE_FOR_AUDIT) {
+      return Response.ok("pass").build();
+    }
+
+    return Response.ok("fail").build();
   }
 
   private JsonObject getFlightOptions(String fromAirport, String toAirport, Date fromDate, 

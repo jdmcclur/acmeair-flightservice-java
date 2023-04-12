@@ -28,10 +28,12 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+@ApplicationScoped
 public class FlightLoader {
   
   @Inject

@@ -15,7 +15,9 @@
 *******************************************************************************/
 
 package com.acmeair.service;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class KeyGenerator {
 
   public Object generate() {
