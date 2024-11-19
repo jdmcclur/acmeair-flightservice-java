@@ -1,0 +1,33 @@
+FROM semeru_criu
+
+RUN mkdir -p /app
+
+COPY src /app/src
+COPY src/main/java/com/acmeair/mongo/MongoProducer.java.quarkus.native /app/src/main/java/com/acmeair/mongo/MongoProducer.java
+COPY pom.quarkus.xml /app/
+COPY mvnw /app/
+COPY .mvn /app/.mvn
+COPY pidplus.sh /app/pidplus.sh
+COPY restore.sh /app/restore.sh
+WORKDIR /app
+
+RUN chmod +x mvnw
+RUN chmod +x restore.sh
+RUN chmod +x pidplus.sh
+RUN ulimit -a
+RUN ./mvnw -f pom.quarkus.xml clean package
+
+RUN chown -R 1001 /app/
+RUN chmod -R 777 /app/
+
+COPY startQuarkus.sh /app/
+RUN chmod +x startQuarkus.sh
+
+ENV QUARKUS_MONGODB_CONNECTION_STRING=mongodb://10.16.112.86:27017
+RUN ./startQuarkus.sh
+
+RUN chown -R 1001 /app/cr
+RUN chown -R 1001 /app/out
+RUN chown -R 1001 /app/err
+
+CMD ["bash", "startQuarkus.sh"]
