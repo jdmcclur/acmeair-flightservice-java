@@ -1,0 +1,13 @@
+FROM quarkus-semeru-flightservice-step1
+
+COPY startQuarkus.sh /app/
+RUN chmod +x startQuarkus.sh
+
+ENV QUARKUS_MONGODB_CONNECTION_STRING=mongodb://10.16.112.86:27017
+RUN ./startQuarkus.sh
+
+RUN chown -R 1001 /app/cr
+RUN chown -R 1001 /app/out
+RUN chown -R 1001 /app/err
+
+CMD ["bash", "startQuarkus.sh"]
